@@ -13,12 +13,21 @@ DATABASES = {
     }
 }
 
-# INSTALLED_APPS += [
-#     'debug_toolbar',
-# ]
-
-MIDDLEWARE += [
-    'debug_toolbar.middleware.DebugToolbarMiddleware',
-]
-
 INTERNAL_IPS = ['127.0.0.1']
+
+SQL_LOG_ENABLED = config('BLOG_SQL_LOG', default=False, cast=bool)
+
+if SQL_LOG_ENABLED:
+    LOGGING = {
+        'version': 1,
+        'disable_existing_loggers': False,
+        'handlers': {
+            'console': {'class': 'logging.StreamHandler'},
+        },
+        'loggers': {
+            'django.db.backends': {
+                'handlers': ['console'],
+                'level': 'DEBUG',
+            },
+        },
+    }

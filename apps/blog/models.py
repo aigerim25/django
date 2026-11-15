@@ -17,6 +17,12 @@ class Category(Model):
         unique = True,
     )
 
+    class Meta:
+        verbose_name_plural = 'categories'
+
+    def __str__(self) -> str:
+        return self.name 
+
 class Tag(Model):
     name = CharField(
         max_length = TAG_NAME_MAX_LENGTH,
@@ -26,10 +32,14 @@ class Tag(Model):
         unique = True,
     )
 
+    def __str__(self) -> str:
+        return self.name
+
 class Post(Model):
     class Status(TextChoices):
-            DRAFT = 'draft', 'Draft'
-            PUBLISHED = 'published', 'Published'
+        DRAFT = 'draft', 'Draft'
+        PUBLISHED = 'published', 'Published'
+
     author = ForeignKey(
         to=settings.AUTH_USER_MODEL,
         on_delete=CASCADE,
@@ -40,13 +50,12 @@ class Post(Model):
     slug = SlugField(
         unique = True,
     )
-    body = TextField(
-        max_length = 100,
-    )
+    body = TextField()
     category = ForeignKey(
         to=Category, 
         on_delete=SET_NULL,
         null=True,
+        blank=True,
     )
     tags = ManyToManyField(
         to=Tag,
@@ -65,6 +74,9 @@ class Post(Model):
         auto_now=True,
     )
 
+    def __str__(self) -> str:
+        return self.title
+
 class Comment(Model):
     post = ForeignKey(
         to=Post,
@@ -74,11 +86,11 @@ class Comment(Model):
         to=settings.AUTH_USER_MODEL,
         on_delete=CASCADE,
     )
-    body = TextField(
-        max_length = 100,
-    )
+    body = TextField()
     created_at = DateTimeField(
         auto_now_add=True,
     )
 
+    def __str__(self) -> str:
+        return f'Comment #{self.pk} on {self.post}'
 
